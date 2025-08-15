@@ -1,5 +1,5 @@
 ///|
-/// Constrains a value of any comparable type within a specified range \[minimum,
+/// Constrains a value of any comparable type within a specified range [minimum,
 /// maximum].
 ///
 /// Parameters:
@@ -14,15 +14,10 @@
 /// * If `value` is greater than `maximum`, returns `maximum`.
 /// * Otherwise, returns `value` unchanged.
 ///
-/// Example:
-///
-/// ```moonbit
-/// test "clamp" {
-///   inspect!(clamp(5, 0, 10), content="5")
-///   inspect!(clamp(-1, 0, 10), content="0")
-///   inspect!(clamp(15, 0, 10), content="10")
-/// }
-/// ```
+/// Examples:
+/// - clamp(5, 0, 10) returns 5
+/// - clamp(-1, 0, 10) returns 0
+/// - clamp(15, 0, 10) returns 10
 pub fn[T : Compare] clamp(value : T, min : T, max : T) -> T {
   if value < min {
     min
@@ -34,7 +29,7 @@ pub fn[T : Compare] clamp(value : T, min : T, max : T) -> T {
 }
 
 ///|
-/// Checks if a value is within a closed interval \[minimum, maximum].
+/// Checks if a value is within a closed interval [minimum, maximum].
 ///
 /// Parameters:
 ///
@@ -45,15 +40,10 @@ pub fn[T : Compare] clamp(value : T, min : T, max : T) -> T {
 /// Returns `true` if the value is greater than or equal to `minimum` and less
 /// than or equal to `maximum`, `false` otherwise.
 ///
-/// Example:
-///
-/// ```moonbit
-/// test "is_between" {
-///   inspect!(is_between(5, 0, 10), content="true")
-///   inspect!(is_between(0, 1, 10), content="false")
-///   inspect!(is_between(1.5, 1.0, 2.0), content="true")
-/// }
-/// ```
+/// Examples:
+/// - is_between(5, 0, 10) returns true
+/// - is_between(-1, 0, 10) returns false
+/// - is_between(15, 0, 10) returns false
 pub fn[T : Compare] is_between(value : T, min : T, max : T) -> Bool {
   value >= min && value <= max
 }

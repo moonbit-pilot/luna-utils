@@ -1,33 +1,32 @@
+// Generated using `moon info`, DON'T EDIT IT
 package "Luna-Flow/luna-utils"
 
-import(
-  "Luna-Flow/luna-generic"
-)
-
 // Values
-fn arr_abs_sum[A : @luna-generic.Num + Compare](Array[A]) -> A
+fn arr_abs_sum(Array[Int]) -> Int
 
-fn arr_sum[A : @luna-generic.AddMonoid](Array[A]) -> A
+fn arr_sum(Array[Int]) -> Int
 
-fn clamp[T : Compare](T, T, T) -> T
+fn[T : Compare] clamp(T, T, T) -> T
 
-fn find[T : Eq](Array[T], T) -> Int?
+fn[A] find(Array[A], (A) -> Bool) -> A?
 
-fn is_between[T : Compare](T, T, T) -> Bool
+fn[T : Compare] is_between(T, T, T) -> Bool
 
-fn map_same[U, V : Eq](Array[U], (U) -> V) -> Bool
+fn[A, B : Eq] map_same(Array[A], (A) -> B) -> Bool
 
-fn map_same_to[U, V : Eq](Array[U], V, (U) -> V) -> Bool
+fn[A, B : Eq] map_same_to(Array[A], (A) -> B, B) -> Bool
 
-fn reverse[T](Array[T]) -> Array[T]
+fn[A] reverse(Array[A]) -> Array[A]
 
-fn reverse_inplace[T](Array[T]) -> Unit
+fn[A] reverse_inplace(Array[A]) -> Unit
 
-fn same[T : Eq](Array[T]) -> Bool
+fn[A : Eq] same(Array[A]) -> Bool
 
-fn same_to[T : Eq](Array[T], T) -> Bool
+fn[A : Eq] same_to(Array[A], A) -> Bool
 
-fn zero_arr[A : @luna-generic.AddMonoid](Int) -> Array[A]
+fn zero_arr(Int) -> Array[Int]
+
+// Errors
 
 // Types and methods
 

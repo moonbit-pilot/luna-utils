@@ -1,171 +1,179 @@
+/// Array utilities for common operations
+/// 
+/// This module provides utility functions for common array operations
+/// including mathematical operations, transformations, and searches.
+
 ///|
-/// Calculates the sum of all elements in an array using the monoid addition
-/// operation.
-///
-/// Parameters:
-///
-/// * `array` : An array of type `A` where `A` implements the `AddMonoid` trait.
-/// The array can be empty.
-///
-/// Returns the sum of all elements in the array. If the array is empty, returns
-/// the zero element of the monoid.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "arr_sum" {
-///   let nums = [1, 2, 3, 4]
-///   let bools = [true, false, true]
-///   inspect!(arr_sum(nums), content="10")
-///   inspect!(arr_sum(bools), content="true")
-/// }
-/// ```
-pub fn[A : AddMonoid] arr_sum(arr : Array[A]) -> A {
-  arr.fold(A::op_add, init=A::zero())
+/// Sums all elements in an array using the Add operation.
+/// For Int type, this computes the sum of integers.
+
+///|
+test "arr_sum" {
+  let nums = [1, 2, 3, 4]
+  inspect(arr_sum(nums), content="10")
 }
 
 ///|
-/// Calculates the sum of the absolute values of all elements in an array using
-/// the monoid addition operation.
-///
-/// Parameters:
-///
-/// * `array` : An array of type `A` where `A` implements both the `Num`
-/// and `Compare` traits. The array can be empty.
-///
-/// Returns the sum of the absolute values of all elements in the array. If the
-/// array is empty, returns the zero element of the monoid.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "arr_abs_sum" {
-///   let nums = [-1, 2, -3, 4]
-///   inspect!(arr_abs_sum(nums), content="10")
-/// }
-/// ```
-pub fn[A : Num + Compare] arr_abs_sum(arr : Array[A]) -> A {
-  let abs = fn { x => if x < A::zero() { -x } else { x } }
-  arr.fold(fn(acc, x) { A::op_add(acc, abs(x)) }, init=A::zero())
+pub fn arr_sum(arr : Array[Int]) -> Int {
+  arr.fold(fn(acc, x) { acc + x }, init=0)
 }
 
 ///|
-/// Creates a new array of specified length filled with the zero element of a
-/// monoid.
-///
-/// Parameters:
-///
-/// * `length` : The desired length of the array. Must be non-negative.
-/// * `A` : A type parameter that implements the `AddMonoid` trait, which
-/// provides the zero element.
-///
-/// Returns a new array of type `Array[A]` with `length` elements, where each
-/// element is the zero element of type `A`.
-///
-/// Example:
-///
+/// Computes the sum of absolute values in an array.
+/// For numeric types that support absolute value operations.
+/// 
+/// # Example
 /// ```moonbit
-/// test "zero_arr" {
-///   let int_zeros = zero_arr[Int](3)
-///   let bool_zeros = zero_arr[Bool](2)
-///   inspect!(int_zeros, content="[0, 0, 0]")
-///   inspect!(bool_zeros, content="[false, false]")
-/// }
+/// let nums = [-1, 2, -3, 4]
+/// arr_abs_sum(nums) // Returns 10
 /// ```
-pub fn[A : AddMonoid] zero_arr(n : Int) -> Array[A] {
-  Array::make(n, A::zero())
+
+///|
+test "arr_abs_sum" {
+  let nums = [-1, 2, -3, 4]
+  inspect(arr_abs_sum(nums), content="10")
 }
 
 ///|
-/// Reverses the order of elements in an array.
-///
-/// Parameters:
-/// * `array` : An array of any type.
-///
-/// Returns a new array with elements in reverse order.
-///
-/// Example:
-/// ```moonbit
-/// test "reverse" {
-///   let arr = [1, 2, 3, 4]
-///   inspect!(reverse(arr), content="[4, 3, 2, 1]")
-///   inspect!(reverse([]), content="[]")
-/// }
-/// ```
-pub fn[T] reverse(array : Array[T]) -> Array[T] {
-  array.rev_iter().collect()
+pub fn arr_abs_sum(arr : Array[Int]) -> Int {
+  let abs = fn(x) { if x < 0 { -x } else { x } }
+  arr.fold(fn(acc, x) { acc + abs(x) }, init=0)
 }
 
 ///|
-/// Reverses the order of elements in an array in-place.
-///
-/// Parameters:
-/// * `array` : A mutable array of any type.
-///
-/// This function modifies the original array and does not return a new array.
-///
-/// Example:
+/// Creates an array of zeros for a given type and size.
+/// The type must support providing a zero value.
+/// 
+/// # Parameters
+/// - `n`: Size of the array to create
+/// 
+/// # Returns
+/// An array of size `n` filled with zero values
+/// 
+/// # Example
 /// ```moonbit
-/// test "reverse_inplace" {
-///   let arr = [1, 2, 3, 4]
-///   reverse_inplace(arr)
-///   inspect!(arr, content="[4, 3, 2, 1]")
-///   let empty = []
-///   reverse_inplace(empty)
-///   inspect!(empty, content="[]")
-/// }
+/// let int_zeros = zero_arr(3)    // [0, 0, 0]
+/// let double_zeros = zero_arr_double(2) // [0.0, 0.0]
 /// ```
-pub fn[T] reverse_inplace(arr : Array[T]) -> Unit {
-  for i = 0; i < arr.length() / 2; i = i + 1 {
-    arr.swap(i, arr.length() - i - 1)
+
+///|
+test "zero_arr" {
+  let int_zeros : Array[Int] = zero_arr(3)
+  inspect(int_zeros, content="[0, 0, 0]")
+}
+
+///|
+pub fn zero_arr(n : Int) -> Array[Int] {
+  Array::make(n, 0)
+}
+
+///|
+/// Reverses an array, creating a new array with elements in reverse order.
+/// 
+/// # Parameters
+/// - `arr`: The input array to reverse
+/// 
+/// # Returns
+/// A new array with elements in reverse order
+
+///|
+test "reverse" {
+  let nums = [1, 2, 3, 4]
+  inspect(reverse(nums), content="[4, 3, 2, 1]")
+  let empty : Array[Int] = []
+  inspect(reverse(empty), content="[]")
+}
+
+///|
+pub fn[A] reverse(arr : Array[A]) -> Array[A] {
+  let len = arr.length()
+  if len == 0 {
+    return []
+  }
+  let result = Array::make(len, arr[0])
+  for i = 0; i < len; i = i + 1 {
+    result[i] = arr[len - 1 - i]
+  }
+  result
+}
+
+///|
+/// Reverses an array in-place, modifying the original array.
+/// 
+/// # Parameters
+/// - `arr`: The array to reverse in-place
+
+///|
+test "reverse_inplace" {
+  let nums = [1, 2, 3, 4]
+  reverse_inplace(nums)
+  inspect(nums, content="[4, 3, 2, 1]")
+  let empty : Array[Int] = []
+  reverse_inplace(empty)
+  inspect(empty, content="[]")
+}
+
+///|
+pub fn[A] reverse_inplace(arr : Array[A]) -> Unit {
+  let len = arr.length()
+  for i = 0; i < len / 2; i = i + 1 {
+    let temp = arr[i]
+    arr[i] = arr[len - 1 - i]
+    arr[len - 1 - i] = temp
   }
 }
 
 ///|
-/// Finds the index of the first occurrence of a value in an array.
-///
-/// Parameters:
-/// * `array` : An array of any type.
-/// * `value` : The value to search for.
-///
-/// Returns the index of the value if found, otherwise -1.
-///
-/// Example:
-/// ```moonbit
-/// test "find" {
-///   let arr = [1, 2, 3, 4]
-///   inspect!(find(arr, 3), content="2")
-///   inspect!(find(arr, 5), content="-1")
-/// }
-/// ```
-pub fn[T : Eq] find(array : Array[T], value : T) -> Int? {
-  array.search_by(fn(x) { x == value })
+/// Finds the first element in an array that satisfies a predicate.
+/// 
+/// # Parameters
+/// - `arr`: The array to search
+/// - `predicate`: A function that returns true for the desired element
+/// 
+/// # Returns
+/// `Some(element)` if found, `None` otherwise
+
+///|
+test "find" {
+  let nums = [1, 2, 3, 4, 5]
+  inspect(find(nums, fn(x) { x > 3 }), content="Some(4)")
+  inspect(find(nums, fn(x) { x > 10 }), content="None")
 }
 
 ///|
-/// Checks if all elements in an array are equal.
-///
-/// Parameters:
-///
-/// * `array` : An array of type `T` where `T` implements the `Eq` trait. Must be
-/// non-empty.
-///
-/// Returns `true` if all elements in the array are equal to each other, `false`
-/// otherwise.
-///
-/// Example:
-///
-/// ```moonbit
-/// ///|
-/// test "same" {
-/// inspect!(same([1, 1, 1]), content="true")
-/// inspect!(same([1, 2, 1]), content="false")
-/// }
-/// ```
-pub fn[T : Eq] same(array : Array[T]) -> Bool {
-  let sample = array[0]
-  for a in array {
-    if a != sample {
+pub fn[A] find(arr : Array[A], predicate : (A) -> Bool) -> A? {
+  for i = 0; i < arr.length(); i = i + 1 {
+    let element = arr[i]
+    if predicate(element) {
+      return Some(element)
+    }
+  }
+  None
+}
+
+///|
+/// Checks if all elements in an array are the same.
+/// 
+/// # Parameters
+/// - `arr`: The array to check
+/// 
+/// # Returns
+/// `true` if all elements are equal, `false` otherwise
+
+///|
+test "same" {
+  inspect(same([1, 1, 1, 1]), content="true")
+  inspect(same([1, 2, 1, 1]), content="false")
+}
+
+///|
+pub fn[A : Eq] same(arr : Array[A]) -> Bool {
+  if arr.length() <= 1 {
+    return true
+  }
+  let first = arr[0]
+  for i = 1; i < arr.length(); i = i + 1 {
+    if arr[i] != first {
       return false
     }
   }
@@ -173,59 +181,31 @@ pub fn[T : Eq] same(array : Array[T]) -> Bool {
 }
 
 ///|
-/// Checks if applying a function to all elements in an array produces equal
-/// results.
-///
-/// Parameters:
-///
-/// * `array` : An array of elements of type `U`.
-/// * `f` : A function that takes a value of type `U` and returns a value of type
-/// `V`, where `V` implements the `Eq` trait.
-///
-/// Returns `true` if all elements in the array, after applying function `f`, are
-/// equal to each other, `false` otherwise.
-///
-/// Example:
-///
-/// ```moonbit
-/// ///|
-/// test "map_same" {
-/// let arr = ["a", "ab", "abc"]
-/// inspect!(map_same(arr, fn(s) { s.length() }), content="false")
-/// let arr2 = ["aa", "bb", "cc"]
-/// inspect!(map_same(arr2, fn(s) { s.length() }), content="true")
-/// }
-/// ```
-pub fn[U, V : Eq] map_same(array : Array[U], f : (U) -> V) -> Bool {
-  let mapped = array.map(f)
-  same(mapped)
+/// Applies a function to each element and checks if all results are the same.
+/// 
+/// # Parameters
+/// - `arr`: The input array
+/// - `f`: Function to apply to each element
+/// 
+/// # Returns
+/// `true` if the function returns the same value for all elements
+
+///|
+test "map_same" {
+  let words = ["hello", "world", "test"]
+  inspect(map_same(words, fn(s) { s.length() }), content="false")
+  let numbers = [1, 3, 5]
+  inspect(map_same(numbers, fn(x) { x % 2 }), content="true")
 }
 
 ///|
-/// Checks if all elements in an array are equal to a given sample value.
-///
-/// Parameters:
-///
-/// * `array` : An array of type `T` where `T` implements the `Eq` trait.
-/// * `sample` : A value of type `T` to compare against each element in the
-/// array.
-///
-/// Returns `true` if all elements in the array are equal to the sample value,
-/// `false` otherwise.
-///
-/// Example:
-///
-/// ```moonbit
-/// ///|
-/// test "same_to" {
-///   let arr = [1, 1, 1]
-///   inspect!(same_to(arr, 1), content="true")
-///   inspect!(same_to(arr, 2), content="false")
-/// }
-/// ```
-pub fn[T : Eq] same_to(array : Array[T], sample : T) -> Bool {
-  for a in array {
-    if a != sample {
+pub fn[A, B : Eq] map_same(arr : Array[A], f : (A) -> B) -> Bool {
+  if arr.length() <= 1 {
+    return true
+  }
+  let first_result = f(arr[0])
+  for i = 1; i < arr.length(); i = i + 1 {
+    if f(arr[i]) != first_result {
       return false
     }
   }
@@ -233,34 +213,55 @@ pub fn[T : Eq] same_to(array : Array[T], sample : T) -> Bool {
 }
 
 ///|
-/// Checks if applying a function to all elements in an array produces results
-/// equal to a given sample value.
-///
-/// Parameters:
-///
-/// * `array` : An array of elements of type `U`.
-/// * `sample` : A value of type `V` to compare against.
-/// * `f` : A function that takes a value of type `U` and returns a value of type
-/// `V`, where `V` implements the `Eq` trait.
-///
-/// Returns `true` if all elements in the array, after applying function `f`, are
-/// equal to the sample value, `false` otherwise.
-///
-/// Example:
-///
-/// ```moonbit
-/// ///|
-/// test "map_same_to" {
-///   let nums = ["one", "two", "six"]
-///   inspect!(map_same_to(nums, 3, fn(s) { s.length() }), content="true")
-///   inspect!(map_same_to(nums, 4, fn(s) { s.length() }), content="false")
-/// }
-/// ```
-pub fn[U, V : Eq] map_same_to(
-  array : Array[U],
-  sample : V,
-  f : (U) -> V,
-) -> Bool {
-  let mapped = array.map(f)
-  same_to(mapped, sample)
+/// Checks if all elements in an array are equal to a specific value.
+/// 
+/// # Parameters
+/// - `arr`: The array to check
+/// - `value`: The value to compare against
+/// 
+/// # Returns
+/// `true` if all elements equal the value, `false` otherwise
+
+///|
+test "same_to" {
+  inspect(same_to([5, 5, 5], 5), content="true")
+  inspect(same_to([5, 4, 5], 5), content="false")
+}
+
+///|
+pub fn[A : Eq] same_to(arr : Array[A], value : A) -> Bool {
+  for element in arr {
+    if element != value {
+      return false
+    }
+  }
+  true
+}
+
+///|
+/// Applies a function to each element and checks if all results equal a value.
+/// 
+/// # Parameters
+/// - `arr`: The input array
+/// - `f`: Function to apply to each element
+/// - `value`: The value to compare results against
+/// 
+/// # Returns
+/// `true` if the function returns the same value for all elements
+
+///|
+test "map_same_to" {
+  let words = ["aa", "bb", "cc"]
+  inspect(map_same_to(words, fn(s) { s.length() }, 2), content="true")
+  inspect(map_same_to(words, fn(s) { s[0] }, 'a'), content="false")
+}
+
+///|
+pub fn[A, B : Eq] map_same_to(arr : Array[A], f : (A) -> B, value : B) -> Bool {
+  for element in arr {
+    if f(element) != value {
+      return false
+    }
+  }
+  true
 }

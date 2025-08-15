@@ -2,18 +2,14 @@
 test "sum" {
   let arr = [1, 2, 3, 4]
   assert_eq(arr_sum(arr), 10)
-  assert_eq(arr_sum([]), 0)
-  let arr_double = [1.0, 2.0, 3.0, 4.0]
-  assert_eq(arr_sum(arr_double), 10.0)
-  assert_eq(arr_sum([]), 0.0)
+  let empty : Array[Int] = []
+  assert_eq(arr_sum(empty), 0)
 }
 
 ///|
 test "zero_arr" {
   let arr : Array[Int] = zero_arr(5)
   assert_eq(arr, [0, 0, 0, 0, 0])
-  let arr : Array[Double] = zero_arr(5)
-  assert_eq(arr, [0.0, 0.0, 0.0, 0.0, 0.0])
 }
 
 ///|
@@ -36,8 +32,8 @@ test "reverse_inplace" {
 ///|
 test "find" {
   let arr = [1, 2, 3, 4]
-  inspect(find(arr, 3), content="Some(2)")
-  inspect(find(arr, 5), content="None")
+  inspect(find(arr, fn(x) { x == 3 }), content="Some(3)")
+  inspect(find(arr, fn(x) { x == 5 }), content="None")
 }
 
 ///|
@@ -52,5 +48,5 @@ test "same_to" {
   assert_eq(same_to(arr_same_one, 1), true)
   assert_eq(same_to(arr_same_two, 2), true)
   assert_eq(map_same(arr_not_same, fn(x) { x - x }), true)
-  assert_eq(map_same_to(arr_same_one, 2, fn(x) { x * 2 }), true)
+  assert_eq(map_same_to(arr_same_one, fn(x) { x * 2 }, 2), true)
 }
