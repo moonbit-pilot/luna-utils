@@ -20,7 +20,7 @@
 ///   inspect!(arr_sum(bools), content="true")
 /// }
 /// ```
-pub fn arr_sum[A : AddMonoid](arr : Array[A]) -> A {
+pub fn[A : AddMonoid] arr_sum(arr : Array[A]) -> A {
   arr.fold(A::op_add, init=A::zero())
 }
 
@@ -44,7 +44,7 @@ pub fn arr_sum[A : AddMonoid](arr : Array[A]) -> A {
 ///   inspect!(arr_abs_sum(nums), content="10")
 /// }
 /// ```
-pub fn arr_abs_sum[A : Num + Compare](arr : Array[A]) -> A {
+pub fn[A : Num + Compare] arr_abs_sum(arr : Array[A]) -> A {
   let abs = fn { x => if x < A::zero() { -x } else { x } }
   arr.fold(fn(acc, x) { A::op_add(acc, abs(x)) }, init=A::zero())
 }
@@ -72,7 +72,7 @@ pub fn arr_abs_sum[A : Num + Compare](arr : Array[A]) -> A {
 ///   inspect!(bool_zeros, content="[false, false]")
 /// }
 /// ```
-pub fn zero_arr[A : AddMonoid](n : Int) -> Array[A] {
+pub fn[A : AddMonoid] zero_arr(n : Int) -> Array[A] {
   Array::make(n, A::zero())
 }
 
@@ -92,7 +92,7 @@ pub fn zero_arr[A : AddMonoid](n : Int) -> Array[A] {
 ///   inspect!(reverse([]), content="[]")
 /// }
 /// ```
-pub fn reverse[T](array : Array[T]) -> Array[T] {
+pub fn[T] reverse(array : Array[T]) -> Array[T] {
   array.rev_iter().collect()
 }
 
@@ -115,7 +115,7 @@ pub fn reverse[T](array : Array[T]) -> Array[T] {
 ///   inspect!(empty, content="[]")
 /// }
 /// ```
-pub fn reverse_inplace[T](arr : Array[T]) -> Unit {
+pub fn[T] reverse_inplace(arr : Array[T]) -> Unit {
   for i = 0; i < arr.length() / 2; i = i + 1 {
     arr.swap(i, arr.length() - i - 1)
   }
@@ -138,7 +138,7 @@ pub fn reverse_inplace[T](arr : Array[T]) -> Unit {
 ///   inspect!(find(arr, 5), content="-1")
 /// }
 /// ```
-pub fn find[T : Eq](array : Array[T], value : T) -> Int? {
+pub fn[T : Eq] find(array : Array[T], value : T) -> Int? {
   array.search_by(fn(x) { x == value })
 }
 
@@ -162,7 +162,7 @@ pub fn find[T : Eq](array : Array[T], value : T) -> Int? {
 /// inspect!(same([1, 2, 1]), content="false")
 /// }
 /// ```
-pub fn same[T : Eq](array : Array[T]) -> Bool {
+pub fn[T : Eq] same(array : Array[T]) -> Bool {
   let sample = array[0]
   for a in array {
     if a != sample {
@@ -196,7 +196,7 @@ pub fn same[T : Eq](array : Array[T]) -> Bool {
 /// inspect!(map_same(arr2, fn(s) { s.length() }), content="true")
 /// }
 /// ```
-pub fn map_same[U, V : Eq](array : Array[U], f : (U) -> V) -> Bool {
+pub fn[U, V : Eq] map_same(array : Array[U], f : (U) -> V) -> Bool {
   let mapped = array.map(f)
   same(mapped)
 }
@@ -223,7 +223,7 @@ pub fn map_same[U, V : Eq](array : Array[U], f : (U) -> V) -> Bool {
 ///   inspect!(same_to(arr, 2), content="false")
 /// }
 /// ```
-pub fn same_to[T : Eq](array : Array[T], sample : T) -> Bool {
+pub fn[T : Eq] same_to(array : Array[T], sample : T) -> Bool {
   for a in array {
     if a != sample {
       return false
@@ -256,10 +256,10 @@ pub fn same_to[T : Eq](array : Array[T], sample : T) -> Bool {
 ///   inspect!(map_same_to(nums, 4, fn(s) { s.length() }), content="false")
 /// }
 /// ```
-pub fn map_same_to[U, V : Eq](
+pub fn[U, V : Eq] map_same_to(
   array : Array[U],
   sample : V,
-  f : (U) -> V
+  f : (U) -> V,
 ) -> Bool {
   let mapped = array.map(f)
   same_to(mapped, sample)

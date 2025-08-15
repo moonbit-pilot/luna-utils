@@ -23,7 +23,7 @@
 ///   inspect!(clamp(15, 0, 10), content="10")
 /// }
 /// ```
-pub fn clamp[T : Compare](value : T, min : T, max : T) -> T {
+pub fn[T : Compare] clamp(value : T, min : T, max : T) -> T {
   if value < min {
     min
   } else if value > max {
@@ -54,6 +54,6 @@ pub fn clamp[T : Compare](value : T, min : T, max : T) -> T {
 ///   inspect!(is_between(1.5, 1.0, 2.0), content="true")
 /// }
 /// ```
-pub fn is_between[T : Compare](value : T, min : T, max : T) -> Bool {
+pub fn[T : Compare] is_between(value : T, min : T, max : T) -> Bool {
   value >= min && value <= max
 }
